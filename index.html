@@ -86,33 +86,28 @@
     <h1>アンケートフォーム</h1>
     <p class="note">以下の必須項目をご入力の上、【送信】を押してください。</p>
 
-    <!-- お名前 -->
     <div class="field">
       <div class="label">お名前 <span class="badge-required">必須</span></div>
       <input id="name" type="text" inputmode="text" placeholder="例）山田 太郎" autocomplete="name" />
     </div>
 
-    <!-- 電話番号 -->
     <div class="field">
       <div class="label">電話番号 <span class="badge-required">必須</span></div>
       <input id="tel" type="tel" inputmode="numeric" pattern="[0-9]*" placeholder="ハイフンなし 例）09012345678" autocomplete="tel" />
       <div class="hint">※10〜11桁の数字をご入力ください</div>
     </div>
 
-    <!-- 住所 -->
     <div class="field">
       <div class="label">住所 <span class="badge-required">必須</span></div>
       <input id="address" type="text" placeholder="例）東京都千代田区丸の内1-1-1" autocomplete="street-address" />
     </div>
 
-    <!-- 生年月日 -->
     <div class="field">
       <div class="label">生年月日 <span class="badge-required">必須</span></div>
       <input id="birth" type="date" />
       <div class="hint">※端末によりカレンダー選択に対応していない場合があります。その際は直接入力してください（YYYY-MM-DD）。</div>
     </div>
 
-    <!-- 性別 -->
     <div class="field">
       <div class="label">性別 <span class="badge-required">必須</span></div>
       <div class="toggle" role="group" aria-label="性別">
@@ -121,7 +116,6 @@
       </div>
     </div>
 
-    <!-- 過去にエステサロンに通ったこと -->
     <div class="field">
       <div class="label">過去にエステサロンに通ったことがありますか <span class="badge-required">必須</span></div>
       <div class="toggle" role="group" aria-label="通院歴">
@@ -130,7 +124,6 @@
       </div>
     </div>
 
-    <!-- アレルギーの有無 -->
     <div class="field">
       <div class="label">アレルギーの有無 <span class="badge-required">必須</span></div>
       <div class="toggle" role="group" aria-label="アレルギーの有無">
@@ -143,7 +136,6 @@
       </div>
     </div>
 
-    <!-- 既往歴 -->
     <div class="field">
       <div class="label">既往歴 <span class="badge-required">必須</span></div>
       <div class="toggle" role="group" aria-label="既往歴">
@@ -156,7 +148,6 @@
       </div>
     </div>
 
-    <!-- お薬の服用 -->
     <div class="field">
       <div class="label">お薬の服用はありますか？ <span class="badge-required">必須</span></div>
       <div class="toggle" role="group" aria-label="服薬">
@@ -169,7 +160,16 @@
       </div>
     </div>
 
-    <!-- 備考 -->
+    <div class="field">
+      <div class="label">当サロンのブログやInstagramの投稿はご覧になったことがありますか？ <span class="badge-required">必須</span></div>
+      <div class="toggle" role="group" aria-label="SNS閲覧確認">
+        <button type="button" data-group="snsCheck" data-value="よく見ている">よく見ている</button>
+        <button type="button" data-group="snsCheck" data-value="たまに見ている">たまに見ている</button>
+        <button type="button" data-group="snsCheck" data-value="あまり見てない">あまり見てない</button>
+        <button type="button" data-group="snsCheck" data-value="見たことがない">見たことがない</button>
+      </div>
+    </div>
+
     <div class="field">
       <div class="label">備考</div>
       <textarea id="note" placeholder="ご要望や気になる点などがあればご記入ください"></textarea>
@@ -178,7 +178,6 @@
     <button id="submitBtn" class="submit" type="button">送 信</button>
   </div>
 
-  <!-- LIFF SDK -->
   <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
   <script>
     // ====== UI Logic ======
@@ -187,7 +186,8 @@
       visitedEsthe: '',
       allergy: '',
       history: '',
-      medication: ''
+      medication: '',
+      snsCheck: '' // ★追加：state初期値
     };
 
     function setActive(group, value, btn){
@@ -258,6 +258,9 @@
       if(!state.allergy) return alert('アレルギーの有無を選択してください。');
       if(!state.history) return alert('既往歴の有無を選択してください。');
       if(!state.medication) return alert('お薬の服用の有無を選択してください。');
+      
+      // ★追加：バリデーション
+      if(!state.snsCheck) return alert('「当サロンのブログやInstagramの投稿はご覧になったことがありますか？」を選択してください。');
 
       const msg = [
         '≪カルテ≫',
@@ -273,6 +276,8 @@
         state.history === '有' && historyDetail ? `【既往歴の詳細】\n・${historyDetail}` : null,
         `【お薬の服用】\n・${state.medication}`,
         state.medication === '有' && medDetail ? `【服用詳細】\n・${medDetail}` : null,
+        // ★追加：送信メッセージ
+        `【ブログやインスタの閲覧】\n・${state.snsCheck}`,
         note ? `【備考】\n・${note}` : null
       ].filter(Boolean).join('\n\n');
 
